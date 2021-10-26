@@ -6,6 +6,10 @@
 /*********************
  *      INCLUDES
  *********************/
+#include "../../lv_100ask_modules.h"
+
+#if LV_USE_100ASK_DEMO_ASSISTIVE_TOUCH
+
 #include <stdio.h>
 #include <signal.h>
 #include <dbus/dbus.h>
@@ -56,5 +60,5 @@ void assistive_touch_init(void)
 }
 
 
-
+#endif
 

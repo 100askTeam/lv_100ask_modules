@@ -6,6 +6,10 @@
 /*********************
  *      INCLUDES
  *********************/
+#include "../../lv_100ask_modules.h"
+
+#if LV_USE_100ASK_DEMO_INIT_ICON
+
 #include <stdio.h>
 #include <dirent.h>
 #include "lv_100ask_demo_init_icon.h"
@@ -166,3 +170,4 @@ void lv_100ask_demo_init_icon(void)
 }
 
 
+#endif

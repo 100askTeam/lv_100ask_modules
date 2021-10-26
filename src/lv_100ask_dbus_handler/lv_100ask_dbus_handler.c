@@ -6,6 +6,10 @@
 /*********************
  *      INCLUDES
  *********************/
+#include "../../lv_100ask_modules.h"
+
+#if LV_USE_100ASK_DBUS_HANDLER
+
 #include <stdio.h>
 #include <signal.h>
 #include <dbus/dbus.h>
@@ -204,4 +208,4 @@ void lv_100ask_dbus_handler_init(void)
 
 
 
-
+#endif
