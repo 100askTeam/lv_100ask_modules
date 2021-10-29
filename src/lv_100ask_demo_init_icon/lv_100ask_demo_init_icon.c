@@ -58,7 +58,7 @@ static void event_handler(lv_event_t * e)
         char * str_dbus_path = malloc(sizeof(char) * strlen(str_icon_name) + 1);
         sprintf(str_dbus_path, "/%s", str_icon_name);
         str_replace_all(str_dbus_path, '.', '/');
-        dbus_method_call(str_icon_name, str_dbus_path, str_icon_name, "states", 1);
+        dbus_method_call(str_icon_name, str_dbus_path, str_icon_name, "states", 1, 0);
         free(str_dbus_path);
     }
 }

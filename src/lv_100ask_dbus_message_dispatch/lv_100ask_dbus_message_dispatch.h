@@ -1,5 +1,5 @@
-#ifndef LV_100ASK_DBUS_H
-#define LV_100ASK_DBUS_H
+#ifndef LV_100ASK_DBUS_MESSAGE_DISPATCH_H
+#define LV_100ASK_DBUS_MESSAGE_DISPATCH_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,8 +23,10 @@ extern "C" {
 /**********************
  * GLOBAL PROTOTYPES
  **********************/
-void lv_100ask_dbus_handler_init(const char *path, const char *iface);
-void dbus_method_call(const char *destination, const char *path, const char *iface, const char *method, const int state, const int pid);
+//void lv_100ask_dbus_message_dispatch_init(void);
+void dispatch_dbus_message(int data);
+void wait_for_become_front_ground(void);
+void dbus_message_dispatch(int data);
 
 /**********************
  *      MACROS
@@ -34,7 +36,7 @@ void dbus_method_call(const char *destination, const char *path, const char *ifa
 } /* extern "C" */
 #endif
 
-#endif /* LV_100ASK_DBUS_H */
+#endif /* LV_100ASK_DLV_100ASK_DBUS_MESSAGE_DISPATCH_HBUS_H */
 
 
 

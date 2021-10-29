@@ -30,9 +30,9 @@
 
 /* [Main desktop usage] 主桌面初始化组件 */
 #define LV_USE_100ASK_DEMO_INIT_ICON        0
-    0
 
-
+/* [Main desktop usage] 主桌面消息分发组件 */
+#define LV_USE_100ASK_DEMO_MSG_DISP         0
 
 #endif /*LV_100ASK_MODULES_CONF_H*/
 

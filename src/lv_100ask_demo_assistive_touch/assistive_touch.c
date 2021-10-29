@@ -52,7 +52,7 @@ static void assistive_touch_event_handler(lv_event_t * e)
 
 void assistive_touch_init(void)
 {
-    lv_obj_t * img = lv_img_create(lv_scr_act());
+    lv_obj_t * img = lv_img_create(lv_layer_top());
 	lv_img_set_src(img, "/root/assets/assistive_pic.png");
     lv_obj_align(img, LV_ALIGN_RIGHT_MID, -50, -200);
     lv_obj_add_flag(img, LV_OBJ_FLAG_CLICKABLE);
