@@ -22,10 +22,13 @@
  * DEMO USAGE
  *********************/
 
-/* [General] DBus 通信组件 */
+/* [General] APP通用初始化组件 */
+#define LV_USE_100ASK_APP_GENERAL_TEMPLATE  0
+
+/* [General] 通用DBus 通信组件 */
 #define LV_USE_100ASK_DBUS_HANDLER          0
 
-/* [General] 辅助触控组件 */
+/* [General] APP通用辅助触控组件 */
 #define LV_USE_100ASK_DEMO_ASSISTIVE_TOUCH  0
 
 /* [Main desktop usage] 主桌面初始化组件 */
@@ -33,6 +36,7 @@
 
 /* [Main desktop usage] 主桌面消息分发组件 */
 #define LV_USE_100ASK_DEMO_MSG_DISP         0
+
 
 #endif /*LV_100ASK_MODULES_CONF_H*/
 

@@ -62,13 +62,14 @@ static void respond_to_states(DBusConnection *connection, DBusMessage *request) 
     dbus_message_dispatch(states);
 
 #if 1
-    if (0 == strcmp(g_Str_object_path, "net.ask100.lvgl.main"))
+    if (0 == strcmp(g_Str_object_path, "net.ask100.lvgl.Main"))
     {
         // kill 目标进程
         if (pid != 0 )
         {
-            //printf("kill(pid, SIGKILL)\n");
+            //printf("[kill] states: %d, pid: %d\n", states, pid);
             kill(pid, SIGKILL);    
+            //printf("kill sucessful!\n");
         }
     }
 #endif
@@ -193,8 +194,8 @@ void dbus_method_call(const char *destination, const char *path, const char *ifa
         return 0;
     }
     
-    printf("\n\ndbus_method_call:\n");
-    printf("%s, %s, %s, %s, %d, %d\n\n", destination, path, iface, method, state, pid);
+    //printf("\n\ndbus_method_call:\n");
+    //printf("%s, %s, %s, %s, %d, %d\n\n", destination, path, iface, method, state, pid);
 
     message = dbus_message_new_method_call(destination, path, iface, method);
     if(message == NULL) {
