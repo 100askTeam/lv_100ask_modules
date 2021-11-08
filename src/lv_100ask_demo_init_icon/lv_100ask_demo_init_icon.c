@@ -17,7 +17,7 @@
 #include "lv_100ask_demo_init_icon.h"
 
 
-#define ICON_PATH   ("/root/assets/icon/")
+#define ICON_PATH   ("./icon/")
 
 #define ICON_SIZE           (64)
 #define ICON_ROW_COUNT      (4)
@@ -164,7 +164,17 @@ static void clean_screen_obj(lv_obj_t * parent)
 //void lv_100ask_demo_init_icon(lv_anim_t * a)
 void lv_100ask_demo_init_icon(void)
 {
+    DIR *dr;
     struct dirent *de;                          // Pointer for directory entry
+    char icon_path_name[128];
+
+    lv_obj_t * img_gb;
+    lv_obj_t * img_icon;
+    lv_obj_t * label_icon;
+    lv_obj_t * label_icon_name;
+    lv_obj_t * img_bottom_icon;
+    lv_obj_t * label_bottom_icon;
+
   	static lv_style_t cont_style;               // 中间图标区域，容器的样式
 	static lv_style_t icon_style;               // 中间图标区域，容器中的图标的样式
     static lv_style_t obj_bottom_panel_style;   // 底部容器的样式
@@ -230,7 +240,7 @@ void lv_100ask_demo_init_icon(void)
 
     // opendir() returns a pointer of DIR type. 
     //DIR *dr = opendir("assets/icon");
-    DIR *dr = opendir("./");
+    dr = opendir(ICON_PATH);
   
     if (dr == NULL)  // opendir returns NULL if couldn't open directory
     {
@@ -238,12 +248,7 @@ void lv_100ask_demo_init_icon(void)
         return 0;
     }
   
-    lv_obj_t * img_gb;
-    lv_obj_t * img_icon;
-    lv_obj_t * label_icon;
-    lv_obj_t * label_icon_name;
-    lv_obj_t * img_bottom_icon;
-    lv_obj_t * label_bottom_icon;
+
     // Refer http://pubs.opengroup.org/onlinepubs/7990989775/xsh/readdir.html
     // for readdir()
     while ((de = readdir(dr)) != NULL)
@@ -260,23 +265,25 @@ void lv_100ask_demo_init_icon(void)
         //    continue;
         //}
 
+        memset(icon_path_name, 0, sizeof(icon_path_name));
+        lv_snprintf(icon_path_name, sizeof(icon_path_name), "%s%s", ICON_PATH, de->d_name); 
         // 背景
         if(strcmp(de->d_name, "net.ask100.lvgl.bg.png") == 0)
         {
             img_gb = lv_img_create(lv_scr_act());
-            lv_img_set_src(img_gb, de->d_name);
+            lv_img_set_src(img_gb, icon_path_name);
         }
         // 图标
         else
         {
             img_icon = lv_img_create(icon_cont);
-            lv_img_set_src(img_icon, de->d_name);
+            lv_img_set_src(img_icon, icon_path_name);
             lv_obj_add_flag(img_icon, LV_OBJ_FLAG_CLICKABLE);
             lv_obj_add_style(img_icon, &icon_style, 0);
             lv_obj_add_event_cb(img_icon, event_handler, LV_EVENT_CLICKED, NULL);
 
             img_bottom_icon = lv_img_create(bottom_panel);
-            lv_img_set_src(img_bottom_icon, de->d_name);
+            lv_img_set_src(img_bottom_icon, icon_path_name);
             //lv_img_set_zoom(img_bottom_icon, 250);
             lv_obj_add_flag(img_bottom_icon, LV_OBJ_FLAG_CLICKABLE);
             lv_obj_add_style(img_bottom_icon, &icon_style, 0);
