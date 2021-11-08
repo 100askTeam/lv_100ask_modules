@@ -149,16 +149,34 @@ static void lcd_top_widgets(lv_obj_t * parent)
 }
 
 
+static void clean_screen_obj(lv_obj_t * parent)
+{
+    uint32_t i;
+    for(i = 0; i < lv_obj_get_child_cnt(parent); i++)
+    {
+        lv_obj_t * child = lv_obj_get_child(parent, i);
+        if (child != lv_scr_act())
+            lv_obj_del(child);  // lv_obj_clean
+        /*Do something with child*/
+    }
+}
 
-
+//void lv_100ask_demo_init_icon(lv_anim_t * a)
 void lv_100ask_demo_init_icon(void)
 {
-    //lv_obj_clean(lv_scr_act());
-
     struct dirent *de;                          // Pointer for directory entry
   	static lv_style_t cont_style;               // 中间图标区域，容器的样式
 	static lv_style_t icon_style;               // 中间图标区域，容器中的图标的样式
     static lv_style_t obj_bottom_panel_style;   // 底部容器的样式
+
+    if (lv_obj_get_child(lv_scr_act(), 0))
+    lv_obj_del(lv_obj_get_child(lv_scr_act(), 0));
+    lv_obj_t * screen = lv_obj_create(NULL);
+    lv_scr_load(screen);
+
+    //lv_style_reset(&cont_style);
+    //lv_style_reset(&icon_style);
+    //lv_style_reset(&obj_bottom_panel_style);
 
 	/* 设置容器的样式 */
 	lv_style_init(&cont_style);
@@ -230,14 +248,17 @@ void lv_100ask_demo_init_icon(void)
     // for readdir()
     while ((de = readdir(dr)) != NULL)
     {
-        if(strcmp(de->d_name,".") == 0||strcmp(de->d_name,"..") == 0)
+        if((strcmp(de->d_name,".") == 0)  ||\
+           (strcmp(de->d_name,"..") == 0) ||\
+           (strcmp((de->d_name + (strlen(de->d_name) - 4)) , ".png") != 0)||\
+           (strcmp(de->d_name, "100ask_logo.png") == 0))
         {
             continue;
         }
-        if(strcmp((de->d_name + (strlen(de->d_name) - 4)) , ".png") != 0)  //只存取 .png 扩展名的文件名 
-        {
-            continue;
-        }
+        //if(strcmp((de->d_name + (strlen(de->d_name) - 4)) , "100ask_logo.png") == 0)  //只存取 .png 扩展名的文件名 
+        //{
+        //    continue;
+        //}
 
         // 背景
         if(strcmp(de->d_name, "net.ask100.lvgl.bg.png") == 0)

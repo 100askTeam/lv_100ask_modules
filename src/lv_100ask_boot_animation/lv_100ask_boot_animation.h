@@ -1,5 +1,5 @@
-#ifndef LV_100ASK_DEMO_INIT_ICON_H
-#define LV_100ASK_DEMO_INIT_ICON_H
+#ifndef LV_100ASK_BOOT_ANIMATION_H
+#define LV_100ASK_BOOT_ANIMATION_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,8 +23,7 @@ extern "C" {
 /**********************
  * GLOBAL PROTOTYPES
  **********************/
-//void lv_100ask_demo_init_icon(lv_anim_t * a);
-void lv_100ask_demo_init_icon(void);
+void lv_100ask_boot_animation(void (*end_cb)(lv_anim_t *), uint32_t boot_time);
 
 
 /**********************
@@ -35,7 +34,7 @@ void lv_100ask_demo_init_icon(void);
 } /* extern "C" */
 #endif
 
-#endif /* LV_100ASK_DEMO_INIT_ICON_H */
+#endif /* LV_100ASK_BOOT_ANIMATION_H */
 
 
 

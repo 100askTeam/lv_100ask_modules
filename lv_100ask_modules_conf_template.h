@@ -31,6 +31,9 @@
 /* [General] APP通用辅助触控组件 */
 #define LV_USE_100ASK_DEMO_ASSISTIVE_TOUCH  0
 
+/* [Main desktop usage] 开机动画 */
+#define LV_USE_100ASK_BOOT_ANIMATION        0
+
 /* [Main desktop usage] 主桌面初始化组件 */
 #define LV_USE_100ASK_DEMO_INIT_ICON        0
 

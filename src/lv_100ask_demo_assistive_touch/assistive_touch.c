@@ -78,6 +78,19 @@ static void assistive_touch_event_handler(lv_event_t * e)
 }
 
 
+static void assistive_touch_drag_event_handler(lv_event_t * e)
+{
+    lv_obj_t * obj = lv_event_get_target(e);
+
+    lv_indev_t * indev = lv_indev_get_act();
+    lv_point_t vect;
+    lv_indev_get_vect(indev, &vect);
+
+    lv_coord_t x = lv_obj_get_x(obj) + vect.x;
+    lv_coord_t y = lv_obj_get_y(obj) + vect.y;
+    lv_obj_set_pos(obj, x, y);   
+}
+
 void assistive_touch_init(void)
 {
 
@@ -144,6 +157,7 @@ void assistive_touch_init(void)
     lv_obj_align(btn1, LV_ALIGN_RIGHT_MID, -60, -200);
     lv_obj_add_flag(btn1, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(btn1, assistive_touch_event_handler, LV_EVENT_CLICKED, NULL);
+    //lv_obj_add_event_cb(btn1, assistive_touch_drag_event_handler, LV_EVENT_PRESSING, NULL);
 
     lv_obj_t * label = lv_label_create(btn1);
     lv_label_set_text(label, "100ASK");

@@ -35,7 +35,9 @@ extern "C" {
 #include "src/lv_100ask_demo_assistive_touch/assistive_touch.h"
 #include "src/lv_100ask_demo_init_icon/lv_100ask_demo_init_icon.h"
 #include "src/lv_100ask_dbus_message_dispatch/lv_100ask_dbus_message_dispatch.h"
+#include "src/lv_100ask_boot_animation/lv_100ask_boot_animation.h"
 #include "src/lv_100ask_app_general_template/app_general_template.h"
+
 
 /*********************
  *      DEFINES
