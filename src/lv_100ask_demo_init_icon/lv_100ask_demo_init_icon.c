@@ -16,7 +16,6 @@
 #include <dirent.h>
 #include "lv_100ask_demo_init_icon.h"
 
-
 #define ICON_PATH   ("./icon/")
 #define BG_IMG_NAME ("net.ask100.lvgl.bg.png")
 #define TAB_LEFT_APP_COUNT      (4)     // APP的直接个数
@@ -37,6 +36,7 @@
 #define ICON_HOR_RES        (4 + (ICON_SIZE * ICON_COLUNM_COUNT) + (ICON_COL_SPACE * (ICON_COLUNM_COUNT - 1)))//((LV_HOR_RES - ICON_PAD_LEFT - ICON_PAD_RIGHT))        // 列间距
 #define ICON_VER_RES        (4 + (ICON_SIZE * ICON_ROW_COUNT) + (ICON_ROW_SPACE * (ICON_ROW_COUNT - 1)))//((LV_VER_RES - ICON_PAD_TOP  - ICON_PAD_BOTTOM))       // 行间距
 
+static uint16_t g_tab_act = 1;  // 更新tabview的索引，用于返回桌面时保持原来的位置
 
 // 去掉最后的后缀名
 static void strip_ext(char *fname)
@@ -197,6 +197,19 @@ static void set_menu_table_tips(lv_obj_t * parent, int count)
 
 }
 
+static void get_tab_act_index_event_handler(lv_event_t * e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t * obj = lv_event_get_target(e);
+    
+    if(code == LV_EVENT_VALUE_CHANGED) {
+        if (obj)
+        {
+            g_tab_act = lv_tabview_get_tab_act(obj);
+        }
+        else g_tab_act = 1;
+    }
+}
 
 //void lv_100ask_demo_init_icon(lv_anim_t * a)
 void lv_100ask_demo_init_icon(void)
@@ -282,11 +295,12 @@ void lv_100ask_demo_init_icon(void)
     //tabview_desktop = lv_tabview_create(lv_layer_top(), LV_DIR_TOP, 0);
     tabview_desktop = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, 0);
     lv_obj_add_style(tabview_desktop, &style_tabview_desktop, 0);
+    lv_obj_add_event_cb(tabview_desktop, get_tab_act_index_event_handler, LV_EVENT_VALUE_CHANGED, NULL);
     /*Add 3 tabs (the tabs are page (lv_page) and can be scrolled*/
     tab_left = lv_tabview_add_tab(tabview_desktop, "left_desktop");
     tab_main  = lv_tabview_add_tab(tabview_desktop, "main_desktop");
     tab_right = lv_tabview_add_tab(tabview_desktop, "right_desktop");
-    lv_tabview_set_act(tabview_desktop, 1, LV_ANIM_OFF);
+    lv_tabview_set_act(tabview_desktop, g_tab_act, LV_ANIM_OFF);
 
 	/* 中间图标区域面板 */  
     icon_cont_left = lv_obj_create(tab_left);
@@ -318,7 +332,6 @@ void lv_100ask_demo_init_icon(void)
     set_menu_table_tips(tab_left, 0);
     set_menu_table_tips(tab_main, 1);
     set_menu_table_tips(tab_right, 2);
-
 
     // opendir() returns a pointer of DIR type. 
     //DIR *dr = opendir("assets/icon");
