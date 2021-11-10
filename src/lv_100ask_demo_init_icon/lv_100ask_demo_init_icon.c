@@ -22,6 +22,7 @@
 #define TAB_LEFT_APP_COUNT      (4)     // APP的直接个数
 #define TAB_MAIN_APP_COUNT      (11)    // TAB_LEFT_APP_COUNT至TAB_MAIN_APP_COUNT之间APP的放在这里
 #define TAB_RIGHT_APP_COUNT     (11)    // 剩下的APP都放到这里(大于TAB_MAIN_APP_COUNT)
+#define MENU_TABLE_TIPS_PROMPT  (10)     // 菜单位置提示大小
 
 #define ICON_SIZE           (64)
 #define ICON_ROW_COUNT      (4)
@@ -165,6 +166,38 @@ static void clean_screen_obj(lv_obj_t * parent)
     }
 }
 
+
+static void set_menu_table_tips(lv_obj_t * parent, int count)
+{
+    lv_obj_t * round[3];
+
+    /* 左菜单指示 */
+    round[0] = lv_obj_create(parent);       // 左边
+    lv_obj_set_style_border_opa(round[0], 0, 0);
+    lv_obj_set_size(round[0], MENU_TABLE_TIPS_PROMPT, MENU_TABLE_TIPS_PROMPT);
+    lv_obj_align(round[0], LV_ALIGN_CENTER, -20, 180);
+
+    round[1] = lv_obj_create(parent);       // 中间
+    lv_obj_set_style_border_opa(round[1], 0, 0);
+    lv_obj_set_size(round[1], MENU_TABLE_TIPS_PROMPT, MENU_TABLE_TIPS_PROMPT);
+    lv_obj_align(round[1], LV_ALIGN_CENTER, 0, 180);
+
+    round[2] = lv_obj_create(parent);       // 右边
+    lv_obj_set_style_border_opa(round[2], 0, 0);
+    lv_obj_set_size(round[2], MENU_TABLE_TIPS_PROMPT, MENU_TABLE_TIPS_PROMPT);
+    lv_obj_align(round[2], LV_ALIGN_CENTER, 20, 180);
+
+    for(int i = 0; i < 3; i++)
+    {
+        if (i == count)
+            lv_obj_set_style_bg_opa(round[i], LV_OPA_80, 0);
+        else
+            lv_obj_set_style_bg_opa(round[i], LV_OPA_30, 0);
+    }
+
+}
+
+
 //void lv_100ask_demo_init_icon(lv_anim_t * a)
 void lv_100ask_demo_init_icon(void)
 {
@@ -242,6 +275,9 @@ void lv_100ask_demo_init_icon(void)
     lv_snprintf(bg_path_name, sizeof(bg_path_name), "%s%s", ICON_PATH, BG_IMG_NAME); 
     lv_img_set_src(img_gb, bg_path_name);
 
+    /* 屏幕顶部状态栏区域 */
+    lcd_top_widgets(lv_scr_act());
+
     /*Create a Tab view object*/
     //tabview_desktop = lv_tabview_create(lv_layer_top(), LV_DIR_TOP, 0);
     tabview_desktop = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, 0);
@@ -251,9 +287,6 @@ void lv_100ask_demo_init_icon(void)
     tab_main  = lv_tabview_add_tab(tabview_desktop, "main_desktop");
     tab_right = lv_tabview_add_tab(tabview_desktop, "right_desktop");
     lv_tabview_set_act(tabview_desktop, 1, LV_ANIM_OFF);
-
-    /* 屏幕顶部状态栏区域 */
-    lcd_top_widgets(lv_scr_act());
 
 	/* 中间图标区域面板 */  
     icon_cont_left = lv_obj_create(tab_left);
@@ -280,6 +313,12 @@ void lv_100ask_demo_init_icon(void)
     lv_obj_set_flex_flow(bottom_panel, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(bottom_panel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER);
     lv_obj_align(bottom_panel, LV_ALIGN_BOTTOM_MID, 0, -15);
+
+    // 菜单位置提示
+    set_menu_table_tips(tab_left, 0);
+    set_menu_table_tips(tab_main, 1);
+    set_menu_table_tips(tab_right, 2);
+
 
     // opendir() returns a pointer of DIR type. 
     //DIR *dr = opendir("assets/icon");
