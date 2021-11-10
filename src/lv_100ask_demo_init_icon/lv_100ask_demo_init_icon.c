@@ -18,6 +18,10 @@
 
 
 #define ICON_PATH   ("./icon/")
+#define BG_IMG_NAME ("net.ask100.lvgl.bg.png")
+#define TAB_LEFT_APP_COUNT      (4)     // APP的直接个数
+#define TAB_MAIN_APP_COUNT      (11)    // TAB_LEFT_APP_COUNT至TAB_MAIN_APP_COUNT之间APP的放在这里
+#define TAB_RIGHT_APP_COUNT     (11)    // 剩下的APP都放到这里(大于TAB_MAIN_APP_COUNT)
 
 #define ICON_SIZE           (64)
 #define ICON_ROW_COUNT      (4)
@@ -162,6 +166,211 @@ static void clean_screen_obj(lv_obj_t * parent)
 }
 
 //void lv_100ask_demo_init_icon(lv_anim_t * a)
+void lv_100ask_demo_init_icon(void)
+{
+    DIR *dr;
+    struct dirent *de;              // Pointer for directory entry
+    char bg_path_name[128];         // 存放桌面背景路径的缓冲区
+    char icon_path_name[128];       // 存放APP图标路径的缓冲区
+    int app_count = 1;              // 计数以区分不同的tab页面
+
+    lv_obj_t * img_gb;              // 桌面背景
+    lv_obj_t * img_icon;            // APP图标
+    lv_obj_t * label_icon;          // 基于APP图标创建的名称，点击时图标时提取，不展示出来
+    lv_obj_t * label_icon_name;     // 展示在图标下方的名称
+    lv_obj_t * tabview_desktop;     // tab总页面
+    lv_obj_t * img_bottom_icon;     // 展示在底部快速访问栏的图标
+    lv_obj_t * label_bottom_icon;   // 基于底部快速访问栏的图标创建的名称，点击时图标时提取，不展示出来
+
+    lv_obj_t * tab_left;            // 左边的tab页面
+    lv_obj_t * tab_main;            // 中间的tab页面
+    lv_obj_t * tab_right;           // 右边的tab页面
+    lv_obj_t * icon_cont_left;      // 中间图标区域面板
+    lv_obj_t * icon_cont_main;      // 中间图标区域面板
+    lv_obj_t * icon_cont_right;     // 中间图标区域面板
+
+    static lv_style_t style_tabview_desktop;    // 容器的样式
+  	static lv_style_t cont_style;               // 中间图标区域，容器的样式
+	static lv_style_t icon_style;               // 中间图标区域，容器中的图标的样式
+    static lv_style_t obj_bottom_panel_style;   // 底部容器的样式
+
+    if (lv_obj_get_child(lv_scr_act(), 0))
+    lv_obj_del(lv_obj_get_child(lv_scr_act(), 0));
+    lv_obj_t * screen = lv_obj_create(NULL);
+    lv_scr_load(screen);
+
+    //lv_style_reset(&cont_style);
+    //lv_style_reset(&icon_style);
+    //lv_style_reset(&obj_bottom_panel_style);
+
+    lv_style_init(&style_tabview_desktop);
+    //lv_style_set_pad_all(&style_tabview_desktop, 0);
+    lv_style_set_bg_opa(&style_tabview_desktop, 0);
+    //lv_style_set_shadow_opa(&style_tabview_desktop, 0);
+    //lv_style_set_border_opa(&style_tabview_desktop, 0);
+
+	/* 设置容器的样式 */
+	lv_style_init(&cont_style);
+    lv_style_set_bg_opa(&cont_style, 0);
+    lv_style_set_border_opa(&cont_style, 0);
+    lv_style_set_pad_column(&cont_style, ICON_COL_SPACE);
+    lv_style_set_pad_row(&cont_style, ICON_ROW_SPACE);
+    lv_style_set_pad_all(&cont_style, 0);
+    lv_style_set_layout(&cont_style, LV_LAYOUT_FLEX);
+    lv_style_set_base_dir(&cont_style, LV_BASE_DIR_LTR);
+    lv_style_set_flex_flow(&cont_style, LV_FLEX_FLOW_ROW_WRAP);
+
+	/* 容器中的图标的样式 */
+	lv_style_init(&icon_style);
+    lv_style_set_text_opa(&icon_style, 0);
+    lv_style_set_text_font(&icon_style,  &lv_font_montserrat_8);
+	//lv_style_set_radius(&icon_style, 0);
+    //lv_style_set_border_width(&icon_style, 1);
+
+    /* 底部面板区域 */
+    lv_style_init(&obj_bottom_panel_style);
+    lv_style_set_pad_all(&obj_bottom_panel_style, 0);
+    lv_style_set_bg_opa(&obj_bottom_panel_style, LV_OPA_50);
+    lv_style_set_pad_left(&obj_bottom_panel_style, 10);
+    lv_style_set_pad_right(&obj_bottom_panel_style, 10);
+    //lv_style_set_shadow_opa(&obj_bottom_panel_style, 0);
+    lv_style_set_border_opa(&obj_bottom_panel_style, 0);
+    lv_style_set_radius(&obj_bottom_panel_style, 22);
+
+    // 桌面背景
+    img_gb = lv_img_create(lv_scr_act());
+    lv_snprintf(bg_path_name, sizeof(bg_path_name), "%s%s", ICON_PATH, BG_IMG_NAME); 
+    lv_img_set_src(img_gb, bg_path_name);
+
+    /*Create a Tab view object*/
+    //tabview_desktop = lv_tabview_create(lv_layer_top(), LV_DIR_TOP, 0);
+    tabview_desktop = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, 0);
+    lv_obj_add_style(tabview_desktop, &style_tabview_desktop, 0);
+    /*Add 3 tabs (the tabs are page (lv_page) and can be scrolled*/
+    tab_left = lv_tabview_add_tab(tabview_desktop, "left_desktop");
+    tab_main  = lv_tabview_add_tab(tabview_desktop, "main_desktop");
+    tab_right = lv_tabview_add_tab(tabview_desktop, "right_desktop");
+    lv_tabview_set_act(tabview_desktop, 1, LV_ANIM_OFF);
+
+    /* 屏幕顶部状态栏区域 */
+    lcd_top_widgets(lv_scr_act());
+
+	/* 中间图标区域面板 */  
+    icon_cont_left = lv_obj_create(tab_left);
+    lv_obj_set_size(icon_cont_left, ICON_HOR_RES, ICON_VER_RES);
+    lv_obj_center(icon_cont_left);
+    lv_obj_add_style(icon_cont_left, &cont_style, 0);
+    
+    icon_cont_main = lv_obj_create(tab_main);
+    lv_obj_set_size(icon_cont_main, ICON_HOR_RES, ICON_VER_RES);
+    lv_obj_center(icon_cont_main);
+    lv_obj_add_style(icon_cont_main, &cont_style, 0);
+
+    icon_cont_right = lv_obj_create(tab_right);
+    lv_obj_set_size(icon_cont_right, ICON_HOR_RES, ICON_VER_RES);
+    lv_obj_center(icon_cont_right);
+    lv_obj_add_style(icon_cont_right, &cont_style, 0);
+
+    /* 底部快速访问栏面板 */
+    lv_obj_t * bottom_panel = lv_obj_create(lv_scr_act());
+    lv_obj_set_size(bottom_panel,  LV_PCT(70), 80);
+    lv_obj_add_style(bottom_panel, &obj_bottom_panel_style, 0);
+    lv_obj_set_layout(bottom_panel, LV_LAYOUT_FLEX);
+    //lv_obj_set_style_base_dir(bottom_panel, LV_BASE_DIR_RTL, 0);
+    lv_obj_set_flex_flow(bottom_panel, LV_FLEX_FLOW_ROW);
+    lv_obj_set_flex_align(bottom_panel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER);
+    lv_obj_align(bottom_panel, LV_ALIGN_BOTTOM_MID, 0, -15);
+
+    // opendir() returns a pointer of DIR type. 
+    //DIR *dr = opendir("assets/icon");
+    dr = opendir(ICON_PATH);
+  
+    if (dr == NULL)  // opendir returns NULL if couldn't open directory
+    {
+        printf("Could not open current directory!\n");
+        return 0;
+    }
+    app_count = 1;  // 计数以区分不同的tab页面
+    // Refer http://pubs.opengroup.org/onlinepubs/7990989775/xsh/readdir.html
+    while ((de = readdir(dr)) != NULL)
+    {
+        //只存取 .png 扩展名的文件名 
+        if((strcmp(de->d_name,".") == 0)  ||\
+           (strcmp(de->d_name,"..") == 0) ||\
+           (strcmp((de->d_name + (strlen(de->d_name) - 4)) , ".png") != 0)||\
+           (strcmp(de->d_name, "100ask_logo.png") == 0) ||\
+           (strcmp(de->d_name, "net.ask100.lvgl.bg.png") == 0))
+        {
+            continue;
+        }
+
+        // 获取图片的： 路径+名称
+        memset(icon_path_name, 0, sizeof(icon_path_name));
+        lv_snprintf(icon_path_name, sizeof(icon_path_name), "%s%s", ICON_PATH, de->d_name); 
+
+        // 分页摆放APP
+        if (app_count <= TAB_LEFT_APP_COUNT)
+        {
+            img_icon = lv_img_create(icon_cont_left);
+            label_icon_name = lv_label_create(tab_left);    // 显示在图标下方的app名称
+        }
+        else if (app_count <= TAB_MAIN_APP_COUNT)
+        {
+            img_icon = lv_img_create(icon_cont_main);
+            label_icon_name = lv_label_create(tab_main);    // 显示在图标下方的app名称
+        }
+        else if (app_count > TAB_RIGHT_APP_COUNT)
+        {
+            img_icon = lv_img_create(icon_cont_right);
+            label_icon_name = lv_label_create(tab_right);    // 显示在图标下方的app名称
+        }    
+
+        //printf("app_count:%d\n", app_count);
+        app_count++;
+        
+        // 图标
+        lv_img_set_src(img_icon, icon_path_name);
+        lv_obj_add_flag(img_icon, LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_add_style(img_icon, &icon_style, 0);
+        lv_obj_add_event_cb(img_icon, event_handler, LV_EVENT_CLICKED, NULL);
+
+        // 底部快速访问栏
+        img_bottom_icon = lv_img_create(bottom_panel);
+        lv_img_set_src(img_bottom_icon, icon_path_name);
+        //lv_img_set_zoom(img_bottom_icon, 250);
+        lv_obj_add_flag(img_bottom_icon, LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_add_style(img_bottom_icon, &icon_style, 0);
+        lv_obj_add_event_cb(img_bottom_icon, event_handler, LV_EVENT_CLICKED, NULL);
+
+        // 点击图标时调用的服务名(点击图标时父类提取)
+        strip_ext(de->d_name);  // 去掉最后的后缀名 .png
+        label_icon = lv_label_create(img_icon);
+        lv_obj_set_width(label_icon, 64);
+        lv_label_set_text(label_icon, de->d_name);
+
+        // 点击图标时调用的服务名(点击图标时父类提取)
+        label_bottom_icon = lv_label_create(img_bottom_icon);
+        lv_obj_set_width(label_bottom_icon, 64);
+        lv_label_set_text(label_bottom_icon, de->d_name);
+
+        // 显示在图标下方的app名称
+        lv_obj_set_style_text_font(label_icon_name, &lv_font_montserrat_14, 0);
+        lv_obj_set_style_text_color(label_icon_name, lv_color_hex(0xffffff), 0);
+        lv_obj_set_style_text_align(label_icon_name, LV_TEXT_ALIGN_CENTER, 0);
+        lv_obj_set_width(label_icon_name, 64);
+        lv_label_set_text(label_icon_name, strrchr(de->d_name, '.') + 1);
+        lv_obj_align_to(label_icon_name, img_icon, LV_ALIGN_OUT_BOTTOM_MID, 0, 5);
+        lv_obj_move_foreground(label_icon_name); // 防止被桌面背景图覆盖，将其移到前台           
+        //printf("%s\n", de->d_name);
+    }
+    //lv_obj_move_background(img_gb);  // 将背景移动到后台
+
+    closedir(dr);    
+    return 0;
+}
+
+
+#if 0
 void lv_100ask_demo_init_icon(void)
 {
     DIR *dr;
@@ -318,6 +527,6 @@ void lv_100ask_demo_init_icon(void)
     closedir(dr);    
     return 0;
 }
-
+#endif
 
 #endif
